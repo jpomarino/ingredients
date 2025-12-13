@@ -7,8 +7,8 @@ from .base import Recommender
 
 
 class AprioriRecommender(Recommender):
-    def __init__(self, rules: pd.DataFrame):
-        self.rules = rules
+    def __init__(self):
+        self.rules = pd.read_parquet("data/artifacts/apriori_rules.parquet")
 
     def recommend(self, ingredient: str) -> dict[str, float]:
         """
@@ -43,5 +43,5 @@ class AprioriRecommender(Recommender):
             for ing in row["consequents"]:
                 if ing not in top_recs:
                     top_recs[ing] = row["lift"]
-
-        return top_recs
+        # TODO: fix to return a better view of the top recommendations
+        return list(top_recs.keys())
