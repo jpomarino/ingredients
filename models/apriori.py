@@ -10,7 +10,7 @@ class AprioriRecommender(Recommender):
     def __init__(self):
         self.rules = pd.read_parquet("data/artifacts/apriori_rules.parquet")
 
-    def recommend(self, ingredient: str) -> dict[str, float]:
+    def recommend(self, ingredient: str, top_k: int = 15) -> dict[str, float]:
         """
         Return ingredient apriori recommendations given an ingredient.
 
@@ -34,7 +34,7 @@ class AprioriRecommender(Recommender):
             self.rules["antecedents"].apply(lambda li: ingredient in li)
             & (self.rules["lift"] > 1)
         ].copy()
-        filtered_rules = filtered_rules.sort_values("lift", ascending=False)
+        filtered_rules = filtered_rules[:top_k].sort_values("lift", ascending=False)
 
         # Populate a dictionary with the top ingredient recommendations
         top_recs = {}
@@ -43,5 +43,6 @@ class AprioriRecommender(Recommender):
             for ing in row["consequents"]:
                 if ing not in top_recs:
                     top_recs[ing] = row["lift"]
+
         # TODO: fix to return a better view of the top recommendations
         return list(top_recs.keys())
