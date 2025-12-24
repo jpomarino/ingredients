@@ -1,5 +1,5 @@
 import streamlit as st
-from models import apriori, graph
+from models import apriori, graph, word2vec
 
 top_k = 20
 
@@ -18,7 +18,8 @@ if st.button("Recommend"):
     elif model_choice == "Graph":
         model = graph.GraphRecommender()
         rec = model.recommend(ingredient, top_k=top_k)
-    #    elif model_choice == "Word2Vec":
-    #        rec = w2v_model.recommend(ingredient)
+    elif model_choice == "Word2Vec":
+        model = word2vec.Word2VecRecommender()
+        rec = model.recommend(ingredient, top_k=top_k)
 
     st.write(rec)

@@ -44,5 +44,4 @@ class AprioriRecommender(Recommender):
                 if ing not in top_recs:
                     top_recs[ing] = row["lift"]
 
-        # TODO: fix to return a better view of the top recommendations
-        return list(top_recs.keys())
+        return top_recs
