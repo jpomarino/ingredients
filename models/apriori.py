@@ -10,6 +10,12 @@ class AprioriRecommender(Recommender):
     def __init__(self):
         self.rules = pd.read_parquet("data/artifacts/apriori_rules.parquet")
 
+        self.supported_ingredients = set()
+
+        for _, row in self.rules.iterrows():
+            for ingredient in row["antecedents"]:
+                self.supported_ingredients.add(ingredient)
+
     def recommend(self, ingredient: str, top_k: int = 15) -> dict[str, float]:
         """
         Return ingredient apriori recommendations given an ingredient.

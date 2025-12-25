@@ -3,9 +3,14 @@ Script to set up ingredient recommendation models
 """
 
 import sys
+from typing import List
 import pandas as pd
+import pickle
 
 from mlxtend.frequent_patterns import apriori, association_rules
+from scipy.sparse import csr_matrix
+from math import log
+import networkx as nx
 from gensim.models import Word2Vec
 
 sys.path.append("..")
@@ -42,6 +47,75 @@ def train_apriori(data_path: str, output_dir: str) -> None:
     rules.to_parquet(f"{output_dir}/apriori_rules.parquet")
 
     print("Apriori model trained!")
+
+
+def build_graph(
+    df: pd.DataFrame,
+    ingredients: List[str],
+    pmi_threshold: float,
+    min_cooccurrence: int,
+):
+    X = csr_matrix(df.values)
+    n_recipes = X.shape[0]
+
+    # Ingredient co-occurrence
+    cooccurrence = X.T @ X
+    cooccurrence.setdiag(0)
+    cooccurrence.eliminate_zeros()
+
+    # Marginal counts
+    counts = X.sum(axis=0).A1
+
+    G = nx.Graph()
+    coo = cooccurrence.tocoo()
+
+    # Iterate through all ingredient-ingredient pairs to add them to the graph
+    for i, j, count in zip(coo.row, coo.col, coo.data):
+        # Keep only ingredient co-occurrences over the threshold:
+        if count < min_cooccurrence:
+            continue
+
+        # Calculate probabilities
+        p_ij = count / n_recipes
+        p_i = counts[i] / n_recipes
+        p_j = counts[j] / n_recipes
+
+        # Ensure positive probabilities
+        if p_ij <= 0 or p_i <= 0 or p_j <= 0:
+            continue
+
+        # Compute PMI
+        pmi = log(p_ij / (p_i * p_j))
+
+        # Only add edge if PMI is over a threshold
+        if pmi > pmi_threshold:
+            G.add_edge(
+                ingredients[i],
+                ingredients[j],
+                weight=pmi,
+            )
+
+    return G
+
+
+def train_graph(
+    data_path: str,
+    output_dir: str,
+    pmi_threshold: float = 0.1,
+    min_cooccurrence: int = 10,
+):
+    # Read in data
+    df = pd.read_csv(data_path, index_col=0)
+    ingredients = df.columns.to_list()
+
+    # Create graph
+    G = build_graph(df, ingredients, pmi_threshold, min_cooccurrence)
+
+    # Save graph
+    with open(f"{output_dir}/graph_model.pkl", "wb") as f:
+        pickle.dump(G, f)
+
+    print("Graph model trained!")
 
 
 def train_word2vec(
@@ -97,6 +171,7 @@ def train_word2vec(
 
 def main():
     train_apriori(data_path, output_dir)
+    train_graph(data_path, output_dir)
     train_word2vec(data_path, output_dir)
 
 
