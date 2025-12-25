@@ -2,12 +2,9 @@
 Module to create ingredient recommendations with a graph model.
 """
 
-from typing import Dict, Optional
-import pandas as pd
+from typing import Dict
 import pickle
 import networkx as nx
-from scipy.sparse import csr_matrix
-from math import log
 
 from .base import Recommender
 
