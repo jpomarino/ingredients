@@ -3,6 +3,9 @@
 A data-driven ingredient recommendation system that suggests ingredients that pair well together based on recipe data.
 The project combines association rule mining, graph-based methods, and distributional semantics (Word2Vec), and is deployed as an interactive Streamlit web app.
 
+Try the deployed app here:  
+👉 https://ingredients-agqz9rrstjm7vblaztp9oz.streamlit.app/
+
 ## 🚀 Project Overview
 
 Given an ingredient (e.g. apricot), the app recommends other ingredients that commonly co-occur with it in recipes using one of three models:
