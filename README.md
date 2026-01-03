@@ -8,7 +8,7 @@ Try the deployed app here:
 
 ## 🚀 Project Overview
 
-Given an ingredient (e.g. apricot), the app recommends other ingredients that commonly co-occur with it in recipes using one of three models:
+Given an ingredient (e.g. "apricot"), the app recommends other ingredients that commonly co-occur with it in recipes using one of three models:
 
 1. Apriori (Association Rules)
 
@@ -19,23 +19,18 @@ Given an ingredient (e.g. apricot), the app recommends other ingredients that co
 
     * Ingredients represented as nodes
     * Edge weights based on co-occurrence strength
-    * Recommendations derived from graph neighborhoods / scores
+    * Recommendations derived from graph neighborhoods / pointwise mutual information
 
 3. Word2Vec (Ingredient Embeddings)
 
     * Treats recipes as “sentences” and ingredients as “words”
     * Learns dense vector representations
-    * Recommendations based on cosine similarity
+    * Recommendations based on cosine similarity in the embedding space
 
 The system is designed for low-latency inference, with all heavy preprocessing done offline.
 
 ## 🧠 Motivation
 
-Ingredient pairing is a classic recommendation problem with real-world applications:
+I love cooking, and sometimes I need a quick intuition for what ingredients I can use with what I have in the firdge. I found a Kaggle dataset (https://www.kaggle.com/datasets/alincijov/cooking-ingredients?select=train.csv) of recipes and the ingredients they used. I decided to use this dataset to create ingredient recommendations using three different models.
 
-* Recipe discovery
-* Meal planning
-* Grocery assistance
-* Culinary creativity
-
-This project explores how different modeling paradigms (rules, graphs, embeddings) behave on the same problem — and exposes them through a unified interface.
+Through this project, I got hands-on experience in recommendation models based on co-occurrence, and I used Streamlit for the first time to deploy them!
