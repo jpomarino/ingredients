@@ -12,6 +12,16 @@ class Word2VecRecommender(Recommender):
         self.supported_ingredients = list(self.model.wv.index_to_key)
 
     def recommend(self, ingredient: str, top_k: int = 15):
+        """
+        Recommend ingredients for the query ingredient.
+
+        Args:
+            ingredient (str): Query ingredient.
+            top_k (int, optional): Number of ingredients to return. Defaults to 15.
+
+        Returns:
+            _type_: Dictionary of top_k ingredients with their respective cosine similarity values.
+        """
         recs = self.model.wv.most_similar(ingredient, topn=top_k)
 
         return {tup[0]: tup[1] for tup in recs}

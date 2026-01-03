@@ -9,7 +9,6 @@ import networkx as nx
 from .base import Recommender
 
 
-# TODO: add a method to train the graph and save as a pickle file in setup_data.py
 class GraphRecommender(Recommender):
     def __init__(self, data_path: str = "data/artifacts/graph_model.pkl"):
         with open(data_path, "rb") as f:
